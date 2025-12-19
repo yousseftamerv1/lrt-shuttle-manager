@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="auto-refresh"></div> 
+
+<div class="text-center mb-5">
+    <h2 class="fw-bold" style="color: var(--primary);">Student Dashboard</h2>
+    <p class="text-muted">Track buses, check seats, and book your ride instantly.</p>
+</div>
+
+<ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab">
+    <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#uni">
+            <i class="fas fa-university me-2"></i> To University
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#lrt">
+            <i class="fas fa-train me-2"></i> To LRT Station
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="uni">
+        <div class="row">
+            {% for item in trips_data if item.obj.direction == 'To University' %}
+                {% with trip=item.obj, target_time=item.target_time, timer_type=item.timer_type %}
+                    {% include 'trip_card.html' %}
+                {% endwith %}
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486747.png" width="100" class="mb-3 opacity-50">
+                    <h5 class="text-muted">No trips scheduled to University right now.</h5>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="lrt">
+        <div class="row">
+            {% for item in trips_data if item.obj.direction == 'To LRT Station' %}
+                {% with trip=item.obj, target_time=item.target_time, timer_type=item.timer_type %}
+                    {% include 'trip_card.html' %}
+                {% endwith %}
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486747.png" width="100" class="mb-3 opacity-50">
+                    <h5 class="text-muted">No trips scheduled to LRT Station right now.</h5>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

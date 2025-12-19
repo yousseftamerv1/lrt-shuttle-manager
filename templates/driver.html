@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="auto-refresh"></div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0">Driver Dashboard</h2>
+        <p class="text-muted">Manage your daily trips</p>
+    </div>
+    <div class="bg-white p-2 rounded shadow-sm">
+        <span class="fw-bold text-primary">{{ trips|length }}</span> Trips Today
+    </div>
+</div>
+
+<div class="row">
+    {% for trip in trips %}
+    <div class="col-md-6 mb-4">
+        <div class="card card-custom h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                
+                <h1 class="display-4 fw-bold text-dark mb-0">{{ trip.departure_time.strftime('%I:%M') }}</h1>
+                <small class="text-uppercase text-muted fw-bold">{{ trip.departure_time.strftime('%p') }}</small>
+                
+                <div class="my-3">
+                    <span class="badge rounded-pill bg-light text-dark border px-3 py-2">
+                        {% if 'University' in trip.direction %}
+                            <i class="fas fa-school me-1"></i> To University
+                        {% else %}
+                            <i class="fas fa-subway me-1"></i> To LRT Station
+                        {% endif %}
+                    </span>
+                </div>
+
+                <hr class="my-4 opacity-10">
+
+                <div class="row mb-4">
+                    <div class="col-6 border-end">
+                        <small class="text-muted d-block">PASSENGERS</small>
+                        <h3 class="fw-bold {{ 'text-success' if trip.booked_seats < trip.capacity else 'text-danger' }}">
+                            {{ trip.booked_seats }}<span class="fs-6 text-muted">/{{ trip.capacity }}</span>
+                        </h3>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block">STATUS</small>
+                        <h4 class="fw-bold text-primary">{{ trip.status }}</h4>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    {% if trip.status == 'Scheduled' %}
+                        <a href="{{ url_for('toggle_status', id=trip.id) }}" class="btn btn-warning py-3 rounded-pill fw-bold text-dark">
+                            <i class="fas fa-map-marker-alt me-2"></i> I'm at the Stop
+                        </a>
+                    {% elif trip.status == 'Boarding' %}
+                        <a href="{{ url_for('toggle_status', id=trip.id) }}" class="btn btn-primary py-3 rounded-pill fw-bold">
+                            <i class="fas fa-bus me-2"></i> Start Trip (Depart)
+                        </a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5">
+        <div class="text-muted">
+            <i class="fas fa-coffee fa-3x mb-3"></i>
+            <h4>No trips assigned for today.</h4>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

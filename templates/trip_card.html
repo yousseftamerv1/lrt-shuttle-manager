@@ -1,0 +1,68 @@
+<div class="col-md-6 col-lg-4 mb-4">
+    <div class="card card-custom h-100 {{ 'border-2 border-warning' if trip.status == 'Boarding' else '' }}">
+        
+        <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <span><i class="far fa-clock me-2"></i>{{ trip.departure_time.strftime('%I:%M %p') }}</span>
+            {% if trip.status == 'Boarding' %}
+                <span class="badge bg-warning text-dark animate-pulse"><i class="fas fa-walking"></i> Boarding</span>
+            {% else %}
+                <span class="badge bg-light text-muted">Scheduled</span>
+            {% endif %}
+        </div>
+
+        <div class="card-body text-center p-4">
+            
+            <div class="d-flex align-items-center justify-content-center mb-3 text-muted">
+                <i class="fas fa-id-card-alt me-2"></i> 
+                <span>Captain: <strong>{{ trip.driver.username }}</strong></span>
+            </div>
+
+            <div class="timer-badge shadow-sm">
+                <span class="countdown-timer" 
+                      data-time="{{ target_time.isoformat() }}" 
+                      data-type="{{ timer_type }}"
+                      data-id="{{ trip.id }}">
+                    Calculating...
+                </span>
+            </div>
+
+            <div class="mt-4">
+                <div class="d-flex justify-content-between small fw-bold mb-1">
+                    <span>Available Seats</span>
+                    <span>{{ trip.booked_seats }} / {{ trip.capacity }}</span>
+                </div>
+                
+                {% set percent = 0 %}
+                {% if trip.capacity > 0 %}
+                    {% set percent = (trip.booked_seats / trip.capacity * 100) | int %}
+                {% endif %}
+
+                <div class="progress progress-container">
+                    <div class="progress-bar {{ 'bg-danger' if percent >= 100 else 'bg-success' }}" 
+                         role="progressbar" 
+                         style="{{ 'width: ' ~ percent ~ '%;' }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+            {% if trip.id in my_bookings %}
+                <a href="{{ url_for('book_seat', id=trip.id) }}" class="btn btn-outline-danger w-100 rounded-pill">
+                    <i class="fas fa-times me-2"></i> Cancel Booking
+                </a>
+            {% elif trip.booked_seats >= trip.capacity %}
+                <button class="btn btn-secondary w-100 rounded-pill" disabled>
+                    <i class="fas fa-ban me-2"></i> Full Capacity
+                </button>
+            {% else %}
+                <a href="{{ url_for('book_seat', id=trip.id) }}" 
+                   id="btn-{{ trip.id }}" 
+                   class="btn btn-secondary w-100 rounded-pill pointer-none transition-all">
+                   Wait <i class="fas fa-hourglass-half ms-2"></i>
+                </a>
+            {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
