@@ -128,5 +128,5 @@ Use these accounts to explore the system:
 
 ---
 <div align="center">
-  <small>MVP build for a a university project</small>
+  <small>MVP build for a university project</small>
 </div>
